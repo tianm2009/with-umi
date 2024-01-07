@@ -3,56 +3,55 @@ import { InputItem, SelectItem, CheckPickerItem, EditableCell, ActionCell, addRo
 import { useState } from 'react';
 import { FaLock } from "react-icons/fa6";
 import CloseIcon from '@rsuite/icons/Close';
-const { Column, HeaderCell, Cell } = Table;
+const { Column, HeaderCell } = Table;
 
 
-const RunJenkins = () => {
-    const [data, setData] = useState([
+const RunJenkins = ({data, setData}: any) => {
+    const [options, setOptions] = useState([
         { id: 1, label: "instance1", value: "instance1" },
         { id: 2, label: "instance2", value: "instance2" }
     ]);
-    const [paramData, setParamData]: any = useState([]);
     return <>
-        <SelectItem title='Instance' data={data} name="instance"></SelectItem>
+        <SelectItem title='Instance' data={options} name="instance"></SelectItem>
         <InputItem title='Job'  name="job"></InputItem>
-        <Button onClick={e => addRow({name: "param", value: "value"}, {data: paramData, setData: setParamData})}>新增参数</Button>
-        <Table data={paramData} rowHeight={50}>
+        <Button onClick={e => addRow({name: "param", value: "value"}, {data, setData})}>新增参数</Button>
+        <Table data={data} rowHeight={50}>
             <Column width={200}>
                 <HeaderCell>参数名</HeaderCell>
-                <EditableCell dataKey="name" onChange={(id: any, key: any, value: any) => rowValueChange(id, key, value, {data: paramData, setData: setParamData})} />
+                <EditableCell dataKey="name" onChange={(id: any, key: any, value: any) => rowValueChange(id, key, value, {data, setData})} />
             </Column>
             <Column flexGrow={2}>
                 <HeaderCell>参数值</HeaderCell>
-                <EditableCell dataKey="value" onChange={(id: any, key: any, value: any) => rowValueChange(id, key, value, {data: paramData, setData: setParamData})} />
+                <EditableCell dataKey="value" onChange={(id: any, key: any, value: any) => rowValueChange(id, key, value, {data, setData})} />
             </Column>
             <Column width={180} fixed="right">
                 <HeaderCell>...</HeaderCell>
                 <ActionCell style={{ padding: '6px' }} dataKey="id" 
-                     onClick={(id: any) => saveRow(id, {data: paramData, setData: setParamData})} 
-                     onRemove={(id: any) => removeRow(id, {data: paramData, setData: setParamData})} />
+                     onClick={(id: any) => saveRow(id, {data, setData})} 
+                     onRemove={(id: any) => removeRow(id, {data, setData})} />
             </Column>
         </Table>
     </>
 }
 
-const RunApi = () => {
-    const [apiParams, setApiParams]: any = useState([]);
+const RunApi = ({data, setData}: any) => {
     return <>
         <InputItem title='Url'></InputItem>
-        <Table data={apiParams} rowHeight={50}>
+        <Button onClick={e => addRow({name: "param", value: "value"}, {data: data, setData })}>新增参数</Button>
+        <Table data={data} rowHeight={50}>
             <Column width={200}>
                 <HeaderCell>参数名</HeaderCell>
-                <EditableCell dataKey="name" onChange={(id: any, key: any, value: any) => rowValueChange(id, key, value, {data: apiParams, setData: setApiParams})} />
+                <EditableCell dataKey="name" onChange={(id: any, key: any, value: any) => rowValueChange(id, key, value, {data, setData})} />
             </Column>
             <Column flexGrow={2}>
                 <HeaderCell>参数值</HeaderCell>
-                <EditableCell dataKey="value" onChange={(id: any, key: any, value: any) => rowValueChange(id, key, value, {data: apiParams, setData: setApiParams})} />
+                <EditableCell dataKey="value" onChange={(id: any, key: any, value: any) => rowValueChange(id, key, value, {data, setData})} />
             </Column>
             <Column width={180} fixed="right">
                 <HeaderCell>...</HeaderCell>
                 <ActionCell style={{ padding: '6px' }} dataKey="id" 
-                     onClick={(id: any) => saveRow(id, {data: apiParams, setData: setApiParams})} 
-                     onRemove={(id: any) => removeRow(id, {data: apiParams, setData: setApiParams})} />
+                     onClick={(id: any) => saveRow(id, {data, setData})} 
+                     onRemove={(id: any) => removeRow(id, {data, setData})} />
             </Column>
         </Table>
     </>
@@ -77,6 +76,10 @@ const Steps = () => {
 
     const [steps, setSteps]: any = useState([{ type: "jenkins", name: 'Run jenkins step' }]);
     const [selectStep, setSelectStep]: any = useState({ index: -1, step: {} });
+    const [apiParams, setApiParams]: any = useState([]);
+    const [paramData, setParamData]: any = useState([]);
+
+
     const addStep = (eventKey: string) => {
         setSteps([...steps, { ...stepTypes.find(step => step.type === eventKey) }])
     }
@@ -87,9 +90,9 @@ const Steps = () => {
     };
     const showStepPanel = () => {
         if (selectStep?.step?.type === 'jenkins') {
-            return <RunJenkins />
+            return <RunJenkins data={paramData} setData={setParamData} />
         } else if (selectStep?.step?.type === 'api') {
-            return <RunApi />
+            return <RunApi  data={apiParams} setData={setApiParams} />
         } else if (selectStep?.step?.type === 'block') {
             return <RunBlock />
         }
