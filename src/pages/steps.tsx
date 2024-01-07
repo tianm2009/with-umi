@@ -1,76 +1,58 @@
-import { Button, Dropdown, Panel, Divider, IconButton, Table, Form, Tag, Stack } from 'rsuite';
-import { InputItem, SelectItem, CheckPickerItem, EditableCell, ActionCell } from './common'
+import { Button, Dropdown, Panel, IconButton, Table, Form, Tag, Stack } from 'rsuite';
+import { InputItem, SelectItem, CheckPickerItem, EditableCell, ActionCell, addRow, removeRow, rowValueChange, saveRow } from './common'
 import { useState } from 'react';
 import { FaLock } from "react-icons/fa6";
+import CloseIcon from '@rsuite/icons/Close';
 const { Column, HeaderCell, Cell } = Table;
 
 
 const RunJenkins = () => {
     const [data, setData] = useState([
-        {id: 1, label: "instance1", value: "instance1"},
-        {id: 2, label: "instance2", value: "instance2"}
+        { id: 1, label: "instance1", value: "instance1" },
+        { id: 2, label: "instance2", value: "instance2" }
     ]);
-    const [paramData, setParamData] = useState([
-        {id: 1, name: "param", value: "xxxxx"}
-    ]);
-    
-    const handleChange = (id: any, key: any, value: any) => {  
-        const nextData: any = Object.assign([], paramData);
-        if (nextData) {
-            nextData.find((item: any) => item.id === id)[key] = value;
-            setParamData(nextData);   
-        }
-    };
-    const handleEditState = (id: any) => {
-        const nextData = Object.assign([], paramData);
-        const activeItem: any = nextData.find((item: any) => item.id === id);
-        if (activeItem) {
-            activeItem.status = activeItem.status ? null : 'EDIT';
-            setParamData(nextData);
-        }
-    };
+    const [paramData, setParamData]: any = useState([]);
     return <>
-        <SelectItem title='Instance' data={data}></SelectItem>
-        <InputItem title='Job'></InputItem>
+        <SelectItem title='Instance' data={data} name="instance"></SelectItem>
+        <InputItem title='Job'  name="job"></InputItem>
+        <Button onClick={e => addRow({name: "param", value: "value"}, {data: paramData, setData: setParamData})}>新增参数</Button>
         <Table data={paramData} rowHeight={50}>
             <Column width={200}>
                 <HeaderCell>参数名</HeaderCell>
-                <EditableCell dataKey="name" onChange={handleChange} />
+                <EditableCell dataKey="name" onChange={(id: any, key: any, value: any) => rowValueChange(id, key, value, {data: paramData, setData: setParamData})} />
             </Column>
             <Column flexGrow={2}>
                 <HeaderCell>参数值</HeaderCell>
-                <EditableCell dataKey="value" onChange={handleChange} />
+                <EditableCell dataKey="value" onChange={(id: any, key: any, value: any) => rowValueChange(id, key, value, {data: paramData, setData: setParamData})} />
             </Column>
-            <Column width={80} fixed="right">
+            <Column width={180} fixed="right">
                 <HeaderCell>...</HeaderCell>
-                <ActionCell style={{ padding: '6px' }} dataKey="id" onClick={handleEditState}/>
+                <ActionCell style={{ padding: '6px' }} dataKey="id" 
+                     onClick={(id: any) => saveRow(id, {data: paramData, setData: setParamData})} 
+                     onRemove={(id: any) => removeRow(id, {data: paramData, setData: setParamData})} />
             </Column>
         </Table>
-
     </>
 }
 
 const RunApi = () => {
+    const [apiParams, setApiParams]: any = useState([]);
     return <>
         <InputItem title='Url'></InputItem>
-        <Table height={100} data={[{ name: "param", value: "xxxxx" }]}>
+        <Table data={apiParams} rowHeight={50}>
             <Column width={200}>
                 <HeaderCell>参数名</HeaderCell>
-                <Cell dataKey="name" />
+                <EditableCell dataKey="name" onChange={(id: any, key: any, value: any) => rowValueChange(id, key, value, {data: apiParams, setData: setApiParams})} />
             </Column>
             <Column flexGrow={2}>
                 <HeaderCell>参数值</HeaderCell>
-                <Cell dataKey="value" />
+                <EditableCell dataKey="value" onChange={(id: any, key: any, value: any) => rowValueChange(id, key, value, {data: apiParams, setData: setApiParams})} />
             </Column>
-            <Column width={80} fixed="right">
+            <Column width={180} fixed="right">
                 <HeaderCell>...</HeaderCell>
-                <Cell style={{ padding: '6px' }}>
-                    {rowData => (
-                        <Button appearance="link" onClick={() => alert(`id:${rowData.id}`)}>
-                            Edit
-                        </Button>
-                    )}
-                </Cell>
+                <ActionCell style={{ padding: '6px' }} dataKey="id" 
+                     onClick={(id: any) => saveRow(id, {data: apiParams, setData: setApiParams})} 
+                     onRemove={(id: any) => removeRow(id, {data: apiParams, setData: setApiParams})} />
             </Column>
         </Table>
     </>
@@ -90,8 +72,8 @@ const stepTypes = [
     { type: 'block', name: 'Run block step' }
 ]
 const Steps = () => {
-    const selected = { padding: '8px 30px 8px 10px', cursor: 'pointer', color: 'green' }
-    const unselected = { padding: '8px 30px 8px 10px', cursor: 'pointer' }
+    const selected = { padding: '8px 10px 8px 10px', cursor: 'pointer', color: 'green' }
+    const unselected = { padding: '8px 10px 8px 10px', cursor: 'pointer' }
 
     const [steps, setSteps]: any = useState([{ type: "jenkins", name: 'Run jenkins step' }]);
     const [selectStep, setSelectStep]: any = useState({ index: -1, step: {} });
@@ -117,27 +99,28 @@ const Steps = () => {
             return <IconButton style={{ marginLeft: 10 }} icon={<FaLock style={{ width: 36, height: 36, left: 0, padding: 10, position: 'absolute', top: 0 }} />}>Continue</IconButton>
         }
     }
-    const showAddButton = (index: any) => {
-        if (index == steps.length - 1) {
-            return <Dropdown onSelect={addStep} style={{ marginLeft: 10, display: 'inline' }} title='Add'>
-                {stepTypes.map(step => <Dropdown.Item eventKey={step.type}>{step.name}</Dropdown.Item>)}
-            </Dropdown>
-        }
+    const showAddButton = () => {
+        return <Dropdown onSelect={addStep} style={{ marginLeft: 10, display: 'inline' }} title='Add'>
+            {stepTypes.map(step => <Dropdown.Item eventKey={step.type}>{step.name}</Dropdown.Item>)}
+        </Dropdown>
     }
     const renderSteps = () => {
-        return steps.map((step: any, index: number) => {
-            return <Stack style={{ marginBottom: 5 }}>
-                <Tag style={index === selectStep.index ? selected : unselected}
-                    size='lg'
-                    onClose={() => removeStep(index)}
-                    closable={index === selectStep.index}
-                    onClick={() => setSelectStep({ index, step })}>
-                    {step.name}
-                </Tag>
-                {showBlockIcon(step)}
-                {showAddButton(index)}
-            </Stack>;
-        })
+        if (steps.length > 0) {
+            return steps.map((step: any, index: number) => {
+                return <Stack style={{ marginBottom: 5 }}>
+                    <Tag style={index === selectStep.index ? selected : unselected}
+                        size='lg'
+                        onClick={(e: any) => setSelectStep({ index, step })}>
+                        {step.name} {index === selectStep.index ? <CloseIcon onClick={e => {removeStep(index); e.stopPropagation()}}/> : <></> }
+                    </Tag>
+                    {showBlockIcon(step)}
+                    {index == steps.length - 1 ? showAddButton() : <></>}
+                </Stack>;
+            })
+        } else {
+            return showAddButton();
+        }
+
     }
     return <>
         <div>

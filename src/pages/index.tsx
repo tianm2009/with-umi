@@ -46,7 +46,6 @@ export default function HomePage() {
                     <div style={showFormPanel('schedules')}>
                         <Schedules></Schedules>
                     </div>
-                    <Button color="green" appearance="primary" style={{marginTop: 10}}>Create Pipeline</Button>
                 </Panel>
             </Content>
         </Container>
