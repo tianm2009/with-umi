@@ -1,4 +1,4 @@
-import { Container, Panel, Button, Sidebar, Content, Nav } from 'rsuite';
+import { Container, Panel, Button, Sidebar, Content, Nav, Breadcrumb } from 'rsuite';
 import GearIcon from '@rsuite/icons/Gear';
 import { IoTimeOutline } from "react-icons/io5";
 import { FaGitAlt } from "react-icons/fa";
@@ -16,11 +16,15 @@ export default function HomePage() {
     const [selected, setSelected] = useState("general")
     const showFormPanel = (panel: string) => {
         if (selected === panel) {
-            return {disply: 'block'};
+            return {disply: 'block', minHeight: 200 };
         }
         return { display: 'none'}
     }
     return <>
+        <Breadcrumb>
+            <Breadcrumb.Item href="/components">Deployment</Breadcrumb.Item>
+            <Breadcrumb.Item active>New Pipeline</Breadcrumb.Item>
+        </Breadcrumb>
         <Container>
             <Sidebar style={{ paddingRight: 10 }}>
                 <Panel header={<div style={{ fontWeight: 'bold' }}>Pipeline Settings</div>} bordered>
@@ -33,7 +37,7 @@ export default function HomePage() {
                 </Panel>
             </Sidebar>
             <Content style={{margin: 0, padding: 0}}>
-                <Panel header={<div style={{ fontWeight: 'bold', fontSize: 20 }}><FaGitAlt style={{ marginRight: 10, verticalAlign: "-0.15em" }} />New Pipeline</div>} bordered>
+                <Panel header={<div style={{ fontWeight: 'bold', fontSize: 20}}><FaGitAlt style={{ marginRight: 10, verticalAlign: "-0.15em" }} />New Pipeline</div>} bordered>
                     <div style={showFormPanel('general')}>
                         <General></General>
                     </div>
