@@ -1,12 +1,10 @@
-import { Container, FlexboxGrid, Content, PanelGroup, Sidebar, List, Panel, Nav, Input, InputGroup } from 'rsuite';
+import { Container, FlexboxGrid, Content, PanelGroup, Sidebar, Stack, Panel, Nav, Input, InputGroup, ButtonGroup, Button } from 'rsuite';
 import { IoMdTime } from "react-icons/io";
 import SearchIcon from '@rsuite/icons/Search';
 import { useState } from 'react';
 import PlusIcon from '@rsuite/icons/Plus';
 import { CiSun } from "react-icons/ci";
-import { IoSettings } from "react-icons/io5";
 import GearIcon from '@rsuite/icons/Gear';
-
 
 const Detail = () => {
     const iconStyle = { marginRight: 5, verticalAlign: "-0.15em" };
@@ -45,7 +43,7 @@ const Detail = () => {
         }
     ]
     const [filterKey, setFilterKey] = useState("");
-    const [selectedBuild, setSelectedBuild]: any = useState();
+    const [selectedBuild, setSelectedBuild]: any = useState(buildHistory[0]);
 
     const filterBuilds = buildHistory.filter(build => build.id.indexOf(filterKey) > -1 || build.name.indexOf(filterKey) > -1);
 
@@ -115,7 +113,12 @@ const Detail = () => {
             </Sidebar>
 
             <Content>
-                <Panel header="Build Details" bordered>
+                <Panel header={<Stack justifyContent="space-between">
+                                    <span>Build Detail</span>
+                                    <ButtonGroup>
+                                    <Button active>Rebuild</Button>
+                                    </ButtonGroup>
+                                </Stack>} bordered>
                     { showBuildDetail() }
                 </Panel>
             </Content>

@@ -1,5 +1,6 @@
 import { Button, Dropdown, Panel, IconButton, Table, Form, Tag, Stack } from 'rsuite';
-import { InputItem, SelectItem, CheckPickerItem, EditableCell, ActionCell, addRow, removeRow, rowValueChange, saveRow } from './common'
+import { InputItem, SelectItem, CheckPickerItem } from './common';
+import { TableExt, ColumnExt, addRow } from './tableext';
 import { useState } from 'react';
 import { FaLock } from "react-icons/fa6";
 import CloseIcon from '@rsuite/icons/Close';
@@ -14,23 +15,19 @@ const RunJenkins = ({data, setData}: any) => {
     return <>
         <SelectItem title='Instance' data={options} name="instance"></SelectItem>
         <InputItem title='Job'  name="job"></InputItem>
-        <Button onClick={e => addRow({name: "param", value: "value"}, {data, setData})}>新增参数</Button>
-        <Table data={data} rowHeight={50}>
-            <Column width={200}>
-                <HeaderCell>参数名</HeaderCell>
-                <EditableCell dataKey="name" onChange={(id: any, key: any, value: any) => rowValueChange(id, key, value, {data, setData})} />
-            </Column>
-            <Column flexGrow={2}>
-                <HeaderCell>参数值</HeaderCell>
-                <EditableCell dataKey="value" onChange={(id: any, key: any, value: any) => rowValueChange(id, key, value, {data, setData})} />
-            </Column>
-            <Column width={180} fixed="right">
-                <HeaderCell>...</HeaderCell>
-                <ActionCell style={{ padding: '6px' }} dataKey="id" 
-                     onClick={(id: any) => saveRow(id, {data, setData})} 
-                     onRemove={(id: any) => removeRow(id, {data, setData})} />
-            </Column>
-        </Table>
+        <Button onClick={e => addRow({name: "param", value: "value", valueType: "string"}, {data, setData})}>新增参数</Button>
+        <TableExt  data={data} setData={setData} rowHeight={50} columns={[
+            { title: "参数名", dataKey: "name", width: 200},
+            { title: "参数名", dataKey: "value", flexGrow: 2},
+            { title: "值类型", dataKey: "valueType", flexGrow: 2, editorType: {
+                type: "select", options: [
+                    { label: "数字", value: "number" },
+                    { label: "字符", value: "string" }
+                ]
+            }}
+        ]}>
+        </TableExt>
+       
     </>
 }
 
@@ -38,22 +35,11 @@ const RunApi = ({data, setData}: any) => {
     return <>
         <InputItem title='Url'></InputItem>
         <Button onClick={e => addRow({name: "param", value: "value"}, {data: data, setData })}>新增参数</Button>
-        <Table data={data} rowHeight={50}>
-            <Column width={200}>
-                <HeaderCell>参数名</HeaderCell>
-                <EditableCell dataKey="name" onChange={(id: any, key: any, value: any) => rowValueChange(id, key, value, {data, setData})} />
-            </Column>
-            <Column flexGrow={2}>
-                <HeaderCell>参数值</HeaderCell>
-                <EditableCell dataKey="value" onChange={(id: any, key: any, value: any) => rowValueChange(id, key, value, {data, setData})} />
-            </Column>
-            <Column width={180} fixed="right">
-                <HeaderCell>...</HeaderCell>
-                <ActionCell style={{ padding: '6px' }} dataKey="id" 
-                     onClick={(id: any) => saveRow(id, {data, setData})} 
-                     onRemove={(id: any) => removeRow(id, {data, setData})} />
-            </Column>
-        </Table>
+        <TableExt  data={data} setData={setData} rowHeight={50} columns={[
+            { title: "参数名", dataKey: "name", width: 200},
+            { title: "参数名", dataKey: "value", flexGrow: 2}
+        ]}>
+        </TableExt>
     </>
 }
 
