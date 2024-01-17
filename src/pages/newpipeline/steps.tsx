@@ -1,11 +1,9 @@
-import { Button, Dropdown, Panel, IconButton, Table, Form, Tag, Stack } from 'rsuite';
+import { Button, Dropdown, Panel, IconButton, Form, Tag, Stack } from 'rsuite';
 import { InputItem, SelectItem, CheckPickerItem } from './common';
-import { TableExt, ColumnExt, addRow } from './tableext';
+import { TableExt, addRow } from './tableext';
 import { useState } from 'react';
 import { FaLock } from "react-icons/fa6";
 import CloseIcon from '@rsuite/icons/Close';
-const { Column, HeaderCell } = Table;
-
 
 const RunJenkins = ({data, setData}: any) => {
     const [options, setOptions] = useState([
